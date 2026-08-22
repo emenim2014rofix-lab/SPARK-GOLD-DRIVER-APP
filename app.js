@@ -140,7 +140,8 @@ app.get('/membership-status', async (req, res) => {
         if (active) currentPeriodEnd = subscriptions.data[0].current_period_end;
       }
       if (!active && email && email !== 'null' && email !== '') {
-        const customers = await stripe.customers.list({ email: email, limit: 1 });
+        console.log(`[Membership] Searching Stripe for email: ${email}`);
+        const customers = await stripe.customers.list({ email: email.toLowerCase().trim(), limit: 1 });
         if (customers.data.length > 0) {
           const subs = await stripe.subscriptions.list({ customer: customers.data[0].id, limit: 1 });
           active = subs.data.some(s => s.status === 'active' || s.status === 'trialing');
